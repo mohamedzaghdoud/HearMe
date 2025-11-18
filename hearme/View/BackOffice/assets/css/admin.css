@@ -1,0 +1,36 @@
+body {
+    font-family: Arial;
+    margin: 40px;
+    background: #fafafa;
+}
+
+h1 {
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+}
+
+.btn {
+    padding: 8px 12px;
+    text-decoration: none;
+    color: white;
+    border-radius: 4px;
+}
+
+.btn-add { background: #27ae60; }
+.btn-edit { background: #2980b9; }
+.btn-delete { background: #c0392b; }
+
+.error {
+    color: red;
+    font-size: 13px;
+}

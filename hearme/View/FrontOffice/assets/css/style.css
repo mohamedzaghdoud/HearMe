@@ -1,0 +1,17 @@
+:root { --bg:#f7f9fc; --card:#fff; --accent:#6d8bce; --text:#222; --muted:#666; }
+*{box-sizing:border-box;font-family:Arial, sans-serif;}
+body{margin:0;background:var(--bg);color:var(--text);}
+.container{max-width:980px;margin:30px auto;padding:0 16px;}
+.top{background:#fff;border-bottom:1px solid #e6e9ef;}
+.top .container{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;}
+.logo{height:46px;}
+nav a{margin-left:12px;color:var(--accent);text-decoration:none;font-weight:600;}
+.hero{padding:40px 0;text-align:center;}
+.hero h1{font-size:38px;margin:0 0 8px;}
+.btn{display:inline-block;padding:10px 18px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;}
+.formbox{background:var(--card);padding:22px;border-radius:8px;box-shadow:0 6px 18px rgba(30,40,60,0.06);}
+.formbox h2{margin-top:0;}
+.formbox label{display:block;margin:10px 0;font-size:14px;color:var(--muted);}
+.formbox input[type="text"], .formbox input[type="password"]{width:100%;padding:10px;border:1px solid #dfe6ef;border-radius:6px;}
+.formbox button{background:var(--accent);color:#fff;padding:10px 16px;border:none;border-radius:6px;cursor:pointer;}
+.errors{background:#ffecec;border:1px solid #ffbcbc;padding:8px;border-radius:6px;margin-bottom:10px;color:#b20000;}
