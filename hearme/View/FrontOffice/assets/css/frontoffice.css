@@ -1,0 +1,239 @@
+// ===================================================
+// HearMe - Front Office JavaScript (UN SEUL FICHIER)
+// Emplacement : View/FrontOffice/assets/js/hearme-frontoffice.js
+// ===================================================
+
+document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+
+    // ====================================
+    // UTILITAIRES RÉUTILISABLES
+    // ====================================
+    const HearMe = {
+        // Validation email
+        validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        },
+
+        // Validation mot de passe fort
+        validatePassword(pwd) {
+            const errors = [];
+            if (pwd.length < 8) errors.push('8 caractères minimum');
+            if (!/[A-Z]/.test(pwd)) errors.push('1 majuscule');
+            if (!/[a-z]/.test(pwd)) errors.push('1 minuscule');
+            if (!/[0-9]/.test(pwd)) errors.push('1 chiffre');
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) errors.push('1 caractère spécial');
+            return { isValid: errors.length === 0, errors };
+        },
+
+        // Compteur de caractères intelligent
+        addCharacterCounter(id, max) {
+            const textarea = document.getElementById(id);
+            if (!textarea) return;
+
+            let counter = textarea.parentNode.querySelector('.char-counter');
+            if (!counter) {
+                counter = document.createElement('small');
+                counter.className = 'char-counter';
+                counter.style.display = 'block';
+                counter.style.marginTop = '6px';
+                counter.style.fontSize = '13px';
+                textarea.parentNode.appendChild(counter);
+            }
+
+            const update = () => {
+                const remaining = max - textarea.value.length;
+                if (remaining < 0) {
+                    counter.style.color = '#D32F2F';
+                    counter.textContent = `Dépassé de ${-remaining} caractère(s)`;
+                } else if (remaining <= 50) {
+                    counter.style.color = '#FF9800';
+                    counter.textContent = `${remaining} restants`;
+                } else {
+                    counter.style.color = '#666';
+                    counter.textContent = `${remaining} caractères restants`;
+                }
+            };
+            textarea.addEventListener('input', update);
+            update();
+        },
+
+        // Notification toast moderne
+        notify(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 9999;
+                padding: 16px 24px; border-radius: 8px; color: white; font-weight: 500;
+                background: ${type === 'error' ? '#D32F2F' : '#2E7D32'};
+                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+                animation: slideIn 0.4s ease;
+                min-width: 280px; text-align: center;
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        },
+
+        // Bouton en chargement
+        loading(btn, text = 'Envoi en cours...') {
+            const original = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner"></span> ${text}`;
+            return () => {
+                btn.disabled = false;
+                btn.innerHTML = original;
+            };
+        }
+    };
+
+    // Animation CSS injectée une seule fois
+    if (!document.getElementById('hearme-styles')) {
+        const style = document.createElement('style');
+        style.id = 'hearme-styles';
+        style.textContent = `
+            @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            .spinner { 
+                display: inline-block; width: 16px; height: 16px; 
+                border: 2px solid white; border-top-color: transparent; 
+                border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; 
+            }
+            @keyframes spin { to { transform: rotate(360deg); } }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // ====================================
+    // 1. LOGIN FORM
+    // ====================================
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = this.querySelector('#email')?.value.trim();
+            const password = this.querySelector('#password')?.value;
+
+            if (!email || !password) {
+                HearMe.notify('Veuillez remplir tous les champs', 'error');
+                return;
+            }
+            if (!HearMe.validateEmail(email)) {
+                HearMe.notify('Email invalide', 'error');
+                return;
+            }
+
+            const btn = this.querySelector('button[type="submit"]');
+            const restore = HearMe.loading(btn);
+            this.submit();
+        });
+    }
+
+    // ====================================
+    // 2. REGISTER FORM
+    // ====================================
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        const pwdInput = registerForm.querySelector('#password');
+        const confirmInput = registerForm.querySelector('#confirm_password');
+
+        // Feedback en temps réel sur la force du mot de passe
+        if (pwdInput) {
+            pwdInput.addEventListener('input', function () {
+                const { isValid, errors } = HearMe.validatePassword(this.value);
+                let feedback = this.parentNode.querySelector('.pwd-feedback');
+                if (!feedback) {
+                    feedback = document.createElement('div');
+                    feedback.className = 'pwd-feedback';
+                    feedback.style.fontSize = '13px';
+                    feedback.style.marginTop = '8px';
+                    this.parentNode.appendChild(feedback);
+                }
+                if (this.value === '') {
+                    feedback.innerHTML = '';
+                } else if (isValid) {
+                    feedback.innerHTML = '<span style="color:#2E7D32">Mot de passe sécurisé</span>';
+                } else {
+                    feedback.innerHTML = `<span style="color:#D32F2F">Manque :</span> ${errors.join(', ')}`;
+                }
+            });
+        }
+
+        registerForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = this.querySelector('#email')?.value.trim();
+            const pwd = pwdInput?.value;
+            const confirm = confirmInput?.value;
+
+            if (!email || !pwd || !confirm) {
+                HearMe.notify('Tous les champs sont requis', 'error');
+                return;
+            }
+            if (!HearMe.validateEmail(email)) {
+                HearMe.notify('Email invalide', 'error');
+                return;
+            }
+            if (!HearMe.validatePassword(pwd).isValid) {
+                HearMe.notify('Mot de passe trop faible', 'error');
+                return;
+            }
+            if (pwd !== confirm) {
+                HearMe.notify('Les mots de passe ne correspondent pas', 'error');
+                return;
+            }
+
+            const btn = this.querySelector('button[type="submit"]');
+            const restore = HearMe.loading(btn, 'Création du compte...');
+            this.submit();
+        });
+    }
+
+    // ====================================
+    // 3. PROFIL FORM (création & édition)
+    // ====================================
+    const profilForm = document.getElementById('profilForm') || document.getElementById('editProfilForm');
+    if (profilForm) {
+        // Compteurs automatiques
+        HearMe.addCharacterCounter('bio', 1000);
+        HearMe.addCharacterCounter('competences', 500);
+        HearMe.addCharacterCounter('formation', 255);
+        HearMe.addCharacterCounter('experience', 1000);
+        HearMe.addCharacterCounter('preferences', 500);
+        HearMe.addCharacterCounter('autre_theme', 500);
+
+        profilForm.addEventListener('submit', function (e) {
+            const limits = {
+                bio: 1000,
+                competences: 500,
+                formation: 255,
+                experience: 1000,
+                reseaux_sociaux: 255,
+                localisation: 255,
+                preferences: 500,
+                autre_theme: 500
+            };
+
+            for (const [id, max] of Object.entries(limits)) {
+                const field = this.querySelector('#' + id);
+                if (field && field.value.length > max) {
+                    e.preventDefault();
+                    HearMe.notify(`"${field.previousElementSibling?.textContent || id}" : maximum ${max} caractères`, 'error');
+                    field.focus();
+                    return;
+                }
+            }
+
+            const btn = this.querySelector('button[type="submit"]');
+            const restore = HearMe.loading(btn, 'Sauvegarde en cours...');
+        });
+    }
+
+    // ====================================
+    // 4. Messages flash après redirection
+    // ====================================
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === '1' || urlParams.get('registered')) {
+        HearMe.notify('Opération réussie !', 'success');
+    }
+    if (urlParams.get('error')) {
+        HearMe.notify('Une erreur est survenue', 'error');
+    }
+});

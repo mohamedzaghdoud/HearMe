@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HearMe - Page d'Accueil</title>
+    <link rel="stylesheet" href="../BackOffice/assets/css/style.css">
+    <style>
+        .welcome-section {
+            background: linear-gradient(135deg, #E6D9F5 0%, #A8D5E2 50%, #B8E6D5 100%);
+            padding: 6rem 2rem;
+            text-align: center;
+            border-radius: 24px;
+            margin-bottom: 3rem;
+        }
+        
+        .welcome-section h1 {
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-section .tagline {
+            font-size: 1.5rem;
+            color: white;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto 2rem auto;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="Home.html" class="logo">🎧 HearMe</a>
+        <ul class="nav-links">
+            <li><a href="Home.html">Accueil</a></li>
+            <li><a href="Profilfront.php">Mon Profil</a></li>
+            <li><a href="../BackOffice/logout.php">Déconnexion</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>🌟 Bienvenue sur HearMe</h1>
+            <p class="tagline">
+                Un espace sûr et bienveillant où chaque voix compte. 
+                Partagez, écoutez, trouvez du soutien.
+            </p>
+            
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">💬 Commencer une conversation</a>
+                <a href="Profilfront.php" class="btn btn-secondary">👤 Mon Profil</a>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.5rem; color: #4A5568;">
+            Ce que nous offrons
+        </h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤫</div>
+                <h3>Anonymat garanti</h3>
+                <p>Partagez vos pensées en toute confidentialité.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Écoute bienveillante</h3>
+                <p>Recevez du soutien d'une communauté empathique.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Cercles d'écoute</h3>
+                <p>Rejoignez des groupes de personnes similaires.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💌</div>
+                <h3>Messages d'encouragement</h3>
+                <p>Lisez et envoyez des messages bienveillants.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 2rem 0; color: #718096; margin-top: 3rem;">
+            <p>&copy; 2025 HearMe - Tous droits réservés</p>
+            <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+                Un espace d'écoute bienveillante pour les jeunes
+            </p>
+        </div>
+    </div>
+</body>
+</html>
