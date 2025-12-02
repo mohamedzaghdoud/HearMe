@@ -1,0 +1,44 @@
+<?php
+class Participation {
+    private $participation_id;
+    private $activity_id;
+    private $user_name;
+    private $user_email;
+    private $registration_date;
+    private $status;
+    private $special_requirements;
+
+    public function __construct($activity_id, $user_name, $user_email, $status = 'confirmed', $special_requirements = '') {
+        $this->activity_id = $activity_id;
+        $this->user_name = $user_name;
+        $this->user_email = $user_email;
+        $this->status = $status;
+        $this->special_requirements = $special_requirements;
+        $this->registration_date = date('Y-m-d H:i:s');
+    }
+
+    // Getters
+    public function getId() { return $this->participation_id; }
+    public function getActivityId() { return $this->activity_id; }
+    public function getUserName() { return $this->user_name; }
+    public function getUserEmail() { return $this->user_email; }
+    public function getRegistrationDate() { return $this->registration_date; }
+    public function getStatus() { return $this->status; }
+    public function getSpecialRequirements() { return $this->special_requirements; }
+
+    // Méthode show()
+    public function show() {
+        echo "<div style='border:1px solid #ccc; padding:15px; margin:10px; border-radius:5px;'>";
+        echo "<h4>📝 Participation #" . $this->participation_id . "</h4>";
+        echo "<p><strong>Activité ID:</strong> " . $this->activity_id . "</p>";
+        echo "<p><strong>Participant:</strong> " . htmlspecialchars($this->user_name) . "</p>";
+        echo "<p><strong>Email:</strong> " . htmlspecialchars($this->user_email) . "</p>";
+        echo "<p><strong>Statut:</strong> " . $this->status . "</p>";
+        echo "<p><strong>Date d'inscription:</strong> " . $this->registration_date . "</p>";
+        if (!empty($this->special_requirements)) {
+            echo "<p><strong>Besoins spéciaux:</strong> " . htmlspecialchars($this->special_requirements) . "</p>";
+        }
+        echo "</div>";
+    }
+}
+?>
