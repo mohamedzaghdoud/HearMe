@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face ID Amélioré - HearMe</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold flex items-center gap-2">
+                        📷 Face ID Amélioré
+                    </h1>
+                    <p class="text-indigo-100 mt-1">Reconnaissance faciale optimisée</p>
+                </div>
+                <div id="faceCount" class="text-right hidden">
+                    <div class="text-2xl font-bold">0</div>
+                    <div class="text-sm text-indigo-100">visages enregistrés</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <!-- Status Display -->
+            <div id="status" class="mb-6 hidden p-4 rounded-xl flex items-center gap-3">
+                <div id="statusIcon"></div>
+                <span id="statusText" class="font-medium"></span>
+            </div>
+
+            <!-- Debug Toggle -->
+            <div class="mb-4 flex items-center justify-between bg-gray-50 p-3 rounded-xl">
+                <span class="text-sm font-medium text-gray-700">Mode Debug</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="debugToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                </label>
+            </div>
+
+            <!-- Main Menu -->
+            <div id="menuSection" class="space-y-4">
+                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">📋 Instructions</h2>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start gap-2">
+                            <span class="text-indigo-500 font-bold">1.</span>
+                            <span>Autorisez l'accès à votre caméra</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-indigo-500 font-bold">2.</span>
+                            <span>Positionnez-vous à 50cm de l'écran</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-indigo-500 font-bold">3.</span>
+                            <span>Regardez directement la caméra</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-indigo-500 font-bold">4.</span>
+                            <span>Assurez un bon éclairage (face à la lumière)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button id="registerBtn" 
+                        class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl hover:from-green-600 hover:to-emerald-600 transition-all transform hover:scale-105 shadow-lg">
+                        <div class="text-4xl mb-2">👤</div>
+                        <div class="font-bold text-lg">Enregistrer</div>
+                        <div class="text-sm text-green-100">Nouveau visage</div>
+                    </button>
+
+                    <button id="loginBtn" 
+                        class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-6 rounded-2xl hover:from-blue-600 hover:to-indigo-600 transition-all transform hover:scale-105 shadow-lg">
+                        <div class="text-4xl mb-2">🔓</div>
+                        <div class="font-bold text-lg">Se connecter</div>
+                        <div class="text-sm text-blue-100">Face ID</div>
+                    </button>
+                </div>
+
+                <a href="Login.php" 
+                   class="block w-full bg-gray-100 text-gray-700 p-4 rounded-xl hover:bg-gray-200 transition-colors text-center font-medium">
+                    ← Retour à la connexion classique
+                </a>
+            </div>
+
+            <!-- Camera Mode -->
+            <div id="cameraSection" class="space-y-4 hidden">
+                <div class="relative rounded-2xl overflow-hidden bg-gray-900">
+                    <video id="videoElement" class="w-full" autoplay playsinline muted></video>
+                    <canvas id="canvasElement" class="absolute top-0 left-0 w-full h-full"></canvas>
+                    
+                    <!-- Quality Indicator -->
+                    <div id="qualityIndicator" class="absolute top-4 right-4 bg-black bg-opacity-60 text-white px-4 py-2 rounded-lg text-sm">
+                        <div class="font-bold">Qualité:</div>
+                        <div id="qualityText">--</div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button id="actionBtn" 
+                            class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-4 px-6 rounded-xl font-bold hover:from-green-600 hover:to-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
+                        ✅ Enregistrer ce visage
+                    </button>
+
+                    <button id="backBtn" 
+                            class="bg-gray-100 text-gray-700 py-4 px-6 rounded-xl font-bold hover:bg-gray-200 transition-colors">
+                        ← Retour
+                    </button>
+                </div>
+
+                <!-- Debug Panel -->
+                <div id="debugPanel" class="hidden bg-gray-50 p-4 rounded-xl text-xs space-y-2">
+                    <div class="font-bold text-gray-700">🔍 Informations de Debug</div>
+                    <div id="debugContent" class="text-gray-600 font-mono"></div>
+                </div>
+            </div>
+
+            <!-- Success Screen -->
+            <div id="successSection" class="text-center space-y-6 py-8 hidden">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto animate-bounce">
+                    <span class="text-4xl">✅</span>
+                </div>
+                
+                <div>
+                    <h2 id="successTitle" class="text-3xl font-bold text-gray-800 mb-2">
+                        Connexion réussie! 🎉
+                    </h2>
+                    <p id="successMessage" class="text-gray-600 text-lg">
+                        Redirection en cours...
+                    </p>
+                </div>
+
+                <button id="backToMenuBtn" 
+                        class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-4 px-8 rounded-xl font-bold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-lg">
+                    Retour au menu
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 p-4 text-center text-sm text-gray-600 border-t">
+            🔒 Système de reconnaissance faciale sécurisé - HearMe v2.0
+        </div>
+    </div>
+
+    <script>
+        class ImprovedFaceID {
+            constructor() {
+                this.mode = 'menu';
+                this.debugMode = false;
+                this.model = null;
+                this.stream = null;
+                this.faceDetected = false;
+                this.registeredFaces = [];
+                this.currentFaceQuality = 0;
+                this.animationRef = null;
+
+                this.initElements();
+                this.initEventListeners();
+                this.loadModel();
+                this.loadRegisteredFaces();
+            }
+
+            initElements() {
+                this.statusEl = document.getElementById('status');
+                this.statusIcon = document.getElementById('statusIcon');
+                this.statusText = document.getElementById('statusText');
+                this.menuSection = document.getElementById('menuSection');
+                this.cameraSection = document.getElementById('cameraSection');
+                this.successSection = document.getElementById('successSection');
+                this.faceCountEl = document.getElementById('faceCount');
+                this.videoElement = document.getElementById('videoElement');
+                this.canvasElement = document.getElementById('canvasElement');
+                this.ctx = this.canvasElement.getContext('2d');
+                this.registerBtn = document.getElementById('registerBtn');
+                this.loginBtn = document.getElementById('loginBtn');
+                this.actionBtn = document.getElementById('actionBtn');
+                this.backBtn = document.getElementById('backBtn');
+                this.backToMenuBtn = document.getElementById('backToMenuBtn');
+                this.debugToggle = document.getElementById('debugToggle');
+                this.debugPanel = document.getElementById('debugPanel');
+                this.debugContent = document.getElementById('debugContent');
+                this.qualityIndicator = document.getElementById('qualityIndicator');
+                this.qualityText = document.getElementById('qualityText');
+            }
+
+            initEventListeners() {
+                this.registerBtn.addEventListener('click', () => this.setMode('register'));
+                this.loginBtn.addEventListener('click', () => this.setMode('login'));
+                this.backBtn.addEventListener('click', () => this.resetSystem());
+                this.backToMenuBtn.addEventListener('click', () => this.resetSystem());
+                this.debugToggle.addEventListener('change', (e) => {
+                    this.debugMode = e.target.checked;
+                    this.debugPanel.classList.toggle('hidden', !this.debugMode);
+                });
+
+                this.actionBtn.addEventListener('click', () => {
+                    if (this.mode === 'register') {
+                        this.handleRegister();
+                    } else if (this.mode === 'login') {
+                        this.handleLogin();
+                    }
+                });
+            }
+
+            async loadModel() {
+                try {
+                    this.showStatus('🤖 Chargement du modèle IA...', 'loading');
+                    this.model = await blazeface.load();
+                    this.showStatus('✅ Modèle chargé avec succès!', 'success');
+                } catch (error) {
+                    console.error('Erreur chargement modèle:', error);
+                    this.showStatus('❌ Erreur de chargement du modèle', 'error');
+                }
+            }
+
+            async loadRegisteredFaces() {
+                try {
+                    const response = await fetch('../../Controller/UserController.php?action=getFaces');
+                    const result = await response.json();
+                    
+                    if (result.success && result.faces) {
+                        this.registeredFaces = result.faces;
+                        if (this.registeredFaces.length > 0) {
+                            this.faceCountEl.querySelector('.text-2xl').textContent = this.registeredFaces.length;
+                            this.faceCountEl.classList.remove('hidden');
+                        }
+                    }
+                } catch (error) {
+                    console.log('Erreur chargement faces:', error);
+                }
+            }
+
+            setMode(mode) {
+                this.mode = mode;
+                this.showSection(mode);
+                
+                if (mode === 'register' || mode === 'login') {
+                    this.startCamera();
+                    
+                    if (mode === 'register') {
+                        this.actionBtn.textContent = '✅ Enregistrer ce visage';
+                        this.actionBtn.className = 'flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-4 px-6 rounded-xl font-bold hover:from-green-600 hover:to-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg';
+                    } else {
+                        this.actionBtn.textContent = '🔓 Se connecter';
+                        this.actionBtn.className = 'flex-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-4 px-6 rounded-xl font-bold hover:from-blue-600 hover:to-indigo-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg';
+                    }
+                }
+            }
+
+            showSection(section) {
+                this.menuSection.classList.add('hidden');
+                this.cameraSection.classList.add('hidden');
+                this.successSection.classList.add('hidden');
+
+                switch(section) {
+                    case 'menu':
+                        this.menuSection.classList.remove('hidden');
+                        break;
+                    case 'register':
+                    case 'login':
+                        this.cameraSection.classList.remove('hidden');
+                        break;
+                    case 'success':
+                        this.successSection.classList.remove('hidden');
+                        break;
+                }
+            }
+
+            showStatus(message, type = 'info') {
+                this.statusText.textContent = message;
+                this.statusIcon.innerHTML = '';
+
+                const statusClasses = {
+                    success: 'bg-green-50 text-green-700 border border-green-200',
+                    error: 'bg-red-50 text-red-700 border border-red-200',
+                    warning: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+                    loading: 'bg-blue-50 text-blue-700 border border-blue-200',
+                    info: 'bg-blue-50 text-blue-700 border border-blue-200'
+                };
+
+                this.statusEl.className = `mb-6 p-4 rounded-xl flex items-center gap-3 ${statusClasses[type]}`;
+                this.statusEl.classList.remove('hidden');
+
+                if (type === 'loading') {
+                    const spinner = document.createElement('div');
+                    spinner.className = 'w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin';
+                    this.statusIcon.appendChild(spinner);
+                } else if (type === 'success') {
+                    this.statusIcon.textContent = '✅';
+                } else if (type === 'error') {
+                    this.statusIcon.textContent = '❌';
+                } else if (type === 'warning') {
+                    this.statusIcon.textContent = '⚠️';
+                }
+            }
+
+            async startCamera() {
+                try {
+                    this.showStatus('📷 Démarrage de la caméra...', 'loading');
+                    
+                    this.stream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            facingMode: 'user'
+                        }
+                    });
+                    
+                    this.videoElement.srcObject = this.stream;
+                    
+                    this.videoElement.onloadedmetadata = () => {
+                        this.videoElement.play();
+                        this.canvasElement.width = this.videoElement.videoWidth;
+                        this.canvasElement.height = this.videoElement.videoHeight;
+                        this.detectFaces();
+                    };
+                    
+                    this.showStatus('👤 Placez votre visage au centre', 'info');
+                } catch (error) {
+                    console.error('Erreur caméra:', error);
+                    this.showStatus('❌ Impossible d\'accéder à la caméra', 'error');
+                }
+            }
+
+            stopCamera() {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
+                    this.stream = null;
+                }
+                if (this.animationRef) {
+                    cancelAnimationFrame(this.animationRef);
+                }
+                if (this.videoElement) {
+                    this.videoElement.srcObject = null;
+                }
+            }
+
+            async detectFaces() {
+                if (!this.model || !this.videoElement) return;
+
+                const predictions = await this.model.estimateFaces(this.videoElement, false);
+                this.ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+
+                if (predictions.length > 0) {
+                    this.faceDetected = true;
+                    this.actionBtn.disabled = false;
+
+                    const prediction = predictions[0];
+                    const start = prediction.topLeft;
+                    const end = prediction.bottomRight;
+                    const size = [end[0] - start[0], end[1] - start[1]];
+
+                    // Calculer la qualité de la détection
+                    this.currentFaceQuality = this.calculateFaceQuality(prediction, size);
+                    this.updateQualityIndicator(this.currentFaceQuality);
+
+                    // Dessiner le rectangle
+                    this.ctx.strokeStyle = this.currentFaceQuality >= 0.7 ? '#10B981' : '#EAB308';
+                    this.ctx.lineWidth = 4;
+                    this.ctx.strokeRect(start[0], start[1], size[0], size[1]);
+
+                    // Dessiner les coins arrondis
+                    const cornerSize = 20;
+                    this.ctx.lineWidth = 6;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(start[0] + cornerSize, start[1]);
+                    this.ctx.lineTo(start[0], start[1]);
+                    this.ctx.lineTo(start[0], start[1] + cornerSize);
+                    this.ctx.stroke();
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(end[0] - cornerSize, start[1]);
+                    this.ctx.lineTo(end[0], start[1]);
+                    this.ctx.lineTo(end[0], start[1] + cornerSize);
+                    this.ctx.stroke();
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(start[0], end[1] - cornerSize);
+                    this.ctx.lineTo(start[0], end[1]);
+                    this.ctx.lineTo(start[0] + cornerSize, end[1]);
+                    this.ctx.stroke();
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(end[0] - cornerSize, end[1]);
+                    this.ctx.lineTo(end[0], end[1]);
+                    this.ctx.lineTo(end[0], end[1] - cornerSize);
+                    this.ctx.stroke();
+
+                    // Dessiner les landmarks
+                    const landmarks = prediction.landmarks;
+                    this.ctx.fillStyle = '#EF4444';
+                    landmarks.forEach(landmark => {
+                        this.ctx.beginPath();
+                        this.ctx.arc(landmark[0], landmark[1], 4, 0, 2 * Math.PI);
+                        this.ctx.fill();
+                    });
+
+                    // Mise à jour du debug
+                    if (this.debugMode) {
+                        this.updateDebugInfo(prediction);
+                    }
+
+                    if (this.currentFaceQuality >= 0.7) {
+                        if (this.mode === 'register') {
+                            this.showStatus('✅ Excellente qualité! Cliquez sur "Enregistrer"', 'success');
+                        } else {
+                            this.showStatus('✅ Visage détecté! Cliquez sur "Se connecter"', 'success');
+                        }
+                    } else {
+                        this.showStatus('⚠️ Améliorez la qualité: rapprochez-vous et regardez la caméra', 'warning');
+                    }
+                } else {
+                    this.faceDetected = false;
+                    this.actionBtn.disabled = true;
+                    this.currentFaceQuality = 0;
+                    this.updateQualityIndicator(0);
+                    this.showStatus('⚠️ Aucun visage détecté', 'warning');
+                }
+
+                this.animationRef = requestAnimationFrame(() => this.detectFaces());
+            }
+
+            calculateFaceQuality(prediction, size) {
+                const canvasWidth = this.canvasElement.width;
+                const canvasHeight = this.canvasElement.height;
+                
+                // Taille du visage (optimal: 30-60% de l'écran)
+                const faceArea = size[0] * size[1];
+                const canvasArea = canvasWidth * canvasHeight;
+                const sizeRatio = faceArea / canvasArea;
+                const sizeScore = sizeRatio >= 0.15 && sizeRatio <= 0.6 ? 1 : 0.5;
+                
+                // Centrage (optimal: centre de l'écran)
+                const faceCenter = [
+                    prediction.topLeft[0] + size[0] / 2,
+                    prediction.topLeft[1] + size[1] / 2
+                ];
+                const screenCenter = [canvasWidth / 2, canvasHeight / 2];
+                const centerDistance = Math.sqrt(
+                    Math.pow(faceCenter[0] - screenCenter[0], 2) + 
+                    Math.pow(faceCenter[1] - screenCenter[1], 2)
+                );
+                const maxDistance = Math.sqrt(Math.pow(canvasWidth / 2, 2) + Math.pow(canvasHeight / 2, 2));
+                const centerScore = 1 - (centerDistance / maxDistance);
+                
+                // Probabilité de détection
+                const probScore = prediction.probability[0] || 0;
+                
+                // Score final
+                return (sizeScore * 0.3 + centerScore * 0.3 + probScore * 0.4);
+            }
+
+            updateQualityIndicator(quality) {
+                let text, color;
+                if (quality >= 0.8) {
+                    text = '🟢 Excellente';
+                    color = 'text-green-400';
+                } else if (quality >= 0.6) {
+                    text = '🟡 Bonne';
+                    color = 'text-yellow-400';
+                } else if (quality >= 0.4) {
+                    text = '🟠 Moyenne';
+                    color = 'text-orange-400';
+                } else {
+                    text = '🔴 Faible';
+                    color = 'text-red-400';
+                }
+                this.qualityText.textContent = text;
+                this.qualityText.className = `font-bold ${color}`;
+            }
+
+            updateDebugInfo(prediction) {
+                const info = `
+Landmarks: ${prediction.landmarks.length}
+Probabilité: ${(prediction.probability[0] * 100).toFixed(1)}%
+Qualité: ${(this.currentFaceQuality * 100).toFixed(1)}%
+Taille: ${Math.round(prediction.bottomRight[0] - prediction.topLeft[0])}x${Math.round(prediction.bottomRight[1] - prediction.topLeft[1])}
+                `.trim();
+                this.debugContent.textContent = info;
+            }
+
+            async captureFaceData() {
+                if (!this.model || !this.videoElement) return null;
+
+                const predictions = await this.model.estimateFaces(this.videoElement, false);
+                if (predictions.length === 0) return null;
+
+                const prediction = predictions[0];
+                return {
+                    landmarks: prediction.landmarks,
+                    probability: prediction.probability,
+                    box: {
+                        topLeft: prediction.topLeft,
+                        bottomRight: prediction.bottomRight
+                    },
+                    quality: this.currentFaceQuality,
+                    timestamp: Date.now()
+                };
+            }
+
+            async handleRegister() {
+                if (this.currentFaceQuality < 0.6) {
+                    this.showStatus('⚠️ Qualité insuffisante. Améliorez votre position.', 'warning');
+                    return;
+                }
+
+                try {
+                    this.showStatus('📸 Capture du visage...', 'loading');
+
+                    const faceData = await this.captureFaceData();
+                    if (!faceData) {
+                        this.showStatus('❌ Aucun visage détecté', 'error');
+                        return;
+                    }
+
+                    const email = prompt('Entrez votre email pour l\'enregistrement:');
+                    if (!email) return;
+
+                    const formData = new FormData();
+                    formData.append('email', email);
+                    formData.append('face_data', JSON.stringify(faceData));
+
+                    const response = await fetch('../../Controller/UserController.php?action=registerFace', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showStatus('✅ Visage enregistré avec succès!', 'success');
+                        await this.loadRegisteredFaces();
+                        
+                        setTimeout(() => {
+                            this.resetSystem();
+                        }, 2000);
+                    } else {
+                        this.showStatus('❌ ' + result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Erreur enregistrement:', error);
+                    this.showStatus('❌ Erreur lors de l\'enregistrement', 'error');
+                }
+            }
+
+            async handleLogin() {
+                if (this.currentFaceQuality < 0.5) {
+                    this.showStatus('⚠️ Qualité insuffisante. Positionnez-vous mieux.', 'warning');
+                    return;
+                }
+
+                try {
+                    this.showStatus('🔍 Analyse du visage...', 'loading');
+
+                    const faceData = await this.captureFaceData();
+                    if (!faceData) {
+                        this.showStatus('❌ Aucun visage détecté', 'error');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('face_data', JSON.stringify(faceData));
+
+                    const endpoint = this.debugMode ? 'debugFaces' : 'faceLogin';
+                    const response = await fetch(`../../Controller/UserController.php?action=${endpoint}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (this.debugMode) {
+                        this.showDebugResults(result);
+                    }
+
+                    if (result.success) {
+                        this.showStatus(`✅ Connexion réussie! (${(result.similarity * 100).toFixed(1)}%)`, 'success');
+                        
+                        setTimeout(() => {
+                            if (result.redirect) {
+                                window.location.href = result.redirect;
+                            } else {
+                                window.location.href = 'Home.html';
+                            }
+                        }, 2000);
+                    } else {
+                        this.showStatus(`❌ ${result.message}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Erreur connexion:', error);
+                    this.showStatus('❌ Erreur lors de la connexion', 'error');
+                }
+            }
+
+            showDebugResults(result) {
+                if (!result.comparisons) return;
+
+                let msg = '🔍 RÉSULTATS DEBUG\n\n';
+                result.comparisons.forEach((comp, idx) => {
+                    msg += `${idx + 1}. ${comp.email}\n`;
+                    msg += `   Similarité: ${(comp.similarity * 100).toFixed(1)}%\n`;
+                    msg += `   Géométrique: ${(comp.geometric * 100).toFixed(1)}%\n`;
+                    msg += `   Forme: ${(comp.shape * 100).toFixed(1)}%\n\n`;
+                });
+
+                if (result.recommendation) {
+                    msg += `\n${result.recommendation}`;
+                }
+
+                alert(msg);
+            }
+
+            resetSystem() {
+                this.stopCamera();
+                this.setMode('menu');
+                this.statusEl.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.faceIDSystem = new ImprovedFaceID();
+        });
+    </script>
+</body>
+</html>
