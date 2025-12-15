@@ -1,0 +1,18 @@
+/**
+ * Profil Page CSS - HearMe
+ */
+
+.page-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #A7C7E7 0%, #98D8C8 100%);
+    border-radius: 20px;
+    color: white;
+}
+
+.page-icon svg {
+    stroke: white;
+}

@@ -1,0 +1,151 @@
+/**
+ * CSS pour le test émotionnel (test_emotionnel.php)
+ * HearMe FrontOffice
+ */
+
+/* ===== Test Section ===== */
+.test-section {
+    padding: 60px 0;
+}
+
+.test-section h2 {
+    color: #333;
+    font-weight: 600;
+}
+
+.test-section .text-muted {
+    color: #666 !important;
+}
+
+/* ===== Card Styles ===== */
+.test-section .card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.test-section .card-header {
+    border-bottom: none;
+}
+
+.test-section .card-header h4 {
+    font-weight: 600;
+}
+
+.test-section .card-header small {
+    opacity: 0.9;
+}
+
+/* ===== Progress Bar ===== */
+.test-section .progress {
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.test-section .progress-bar {
+    font-size: 14px;
+    transition: width 0.4s ease;
+}
+
+/* ===== Question Block ===== */
+.question-block {
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.question-block:hover {
+    border-color: #A7C7E7;
+    box-shadow: 0 5px 15px rgba(167, 199, 231, 0.2);
+}
+
+.question-block h5 {
+    color: #333;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.question-block .badge {
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+/* ===== Options Container ===== */
+.options-container {
+    margin-top: 15px;
+}
+
+.option-item {
+    background: #f8f9fa;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.option-item:hover {
+    background: #e3f2fd;
+    border-color: #A7C7E7;
+}
+
+.option-item .form-check-input {
+    width: 20px;
+    height: 20px;
+    margin-top: 0;
+    cursor: pointer;
+}
+
+.option-item .form-check-input:checked {
+    background-color: #A7C7E7;
+    border-color: #A7C7E7;
+}
+
+.option-item .form-check-label {
+    font-size: 15px;
+    color: #444;
+    padding-left: 10px;
+}
+
+/* ===== Submit Button ===== */
+.test-section .btn-success {
+    background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.test-section .btn-success:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+}
+
+/* ===== Back Button ===== */
+.test-section .btn-outline-secondary {
+    border-radius: 25px;
+    padding: 10px 25px;
+    transition: all 0.3s ease;
+}
+
+.test-section .btn-outline-secondary:hover {
+    transform: translateY(-2px);
+}
+
+/* ===== Badge Category ===== */
+.test-section .badge.bg-primary {
+    background: linear-gradient(135deg, #A7C7E7 0%, #98D8C8 100%) !important;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .test-section {
+        padding: 40px 0;
+    }
+    
+    .question-block {
+        padding: 20px !important;
+    }
+    
+    .option-item {
+        padding: 12px !important;
+    }
+}

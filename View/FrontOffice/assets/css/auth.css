@@ -1,0 +1,336 @@
+/**
+ * Auth Pages CSS - HearMe
+ * Login, Register, Forgot Password
+ */
+
+:root {
+    --hearme-primary: #A7C7E7;
+    --hearme-secondary: #98D8C8;
+    --hearme-accent: #B4E7B0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #A7C7E7 0%, #98D8C8 50%, #B4E7B0 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-container,
+.register-container,
+.forgot-container {
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    padding: 50px 40px;
+    max-width: 480px;
+    width: 100%;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--hearme-primary) 0%, var(--hearme-secondary) 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+}
+
+.logo-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: white;
+}
+
+.logo h1 {
+    color: #333;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.logo p {
+    color: #777;
+    font-size: 14px;
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #E8E8E8;
+    border-radius: 15px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #FAFAFA;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--hearme-primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(167, 199, 231, 0.2);
+}
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #FFE5E5 0%, #FFD5D5 100%);
+    color: #D32F2F;
+    border: none;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #E5F7E5 0%, #D5F5D5 100%);
+    color: #2E7D32;
+    border: none;
+}
+
+.btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--hearme-primary) 0%, var(--hearme-secondary) 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(167, 199, 231, 0.4);
+}
+
+.btn-google {
+    background: white;
+    color: #333;
+    border: 2px solid #E8E8E8;
+    margin-top: 15px;
+}
+
+.btn-google:hover {
+    background: #F8F8F8;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.btn-face {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-top: 10px;
+}
+
+.btn-face:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.divider {
+    text-align: center;
+    margin: 25px 0;
+    color: #999;
+    font-size: 14px;
+    position: relative;
+}
+
+.divider::before, .divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #E8E8E8;
+}
+
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+.links {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.links a {
+    color: var(--hearme-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.links a:hover {
+    color: var(--hearme-secondary);
+}
+
+.captcha-box {
+    background: linear-gradient(135deg, #F8F9FA 0%, #F0F4F8 100%);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid var(--hearme-primary);
+}
+
+.captcha-label {
+    text-align: center;
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.emoji-math {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px dashed var(--hearme-secondary);
+}
+
+.emoji-question {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.emoji-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+
+.emoji-item {
+    background: #F5F5F5;
+    padding: 5px 12px;
+    border-radius: 8px;
+}
+
+.captcha-input {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.icon-google {
+    width: 20px;
+    height: 20px;
+}
+
+/* Password requirements */
+.password-requirements {
+    background: linear-gradient(135deg, #F8F9FA 0%, #F0F4F8 100%);
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 10px;
+    border: 1px solid #E8E8E8;
+}
+
+.password-requirements strong {
+    color: var(--hearme-primary);
+    font-size: 13px;
+}
+
+.password-requirements ul {
+    margin: 10px 0 0 20px;
+    font-size: 12px;
+    color: #666;
+}
+
+.password-requirements li {
+    margin-bottom: 5px;
+}
+
+/* Info box */
+.info-box {
+    background: linear-gradient(135deg, rgba(167, 199, 231, 0.1) 0%, rgba(152, 216, 200, 0.1) 100%);
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--hearme-primary);
+}
+
+.info-box p {
+    color: #555;
+    font-size: 14px;
+    margin: 0;
+}
+
+
+/* Forgot Password specific */
+.forgot-container {
+    text-align: center;
+}
+
+.forgot-container h1 {
+    color: #333;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.forgot-container .description {
+    color: #777;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.forgot-container .form-group {
+    text-align: left;
+}
+
+.forgot-container .logo-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 25px;
+    margin-bottom: 25px;
+}
+
+.forgot-container .logo-icon svg {
+    width: 45px;
+    height: 45px;
+}
