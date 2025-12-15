@@ -1,0 +1,95 @@
+# ========================================
+# FICHIERS SENSIBLES - NE PAS COMMITER
+# ========================================
+
+# Configuration OAuth (contient les clés secrètes)
+oauth_config.php
+
+# Configuration base de données
+config.php
+
+# Logs
+logs/
+*.log
+
+# ========================================
+# FICHIERS SYSTÈME
+# ========================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ========================================
+# IDE ET ÉDITEURS
+# ========================================
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PhpStorm / IntelliJ IDEA
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ========================================
+# PHP / COMPOSER
+# ========================================
+
+# Composer
+vendor/
+composer.phar
+composer.lock
+
+# ========================================
+# UPLOADS ET CACHE
+# ========================================
+
+# Uploads utilisateurs
+uploads/
+temp/
+cache/
+
+# Sessions PHP
+sessions/
+
+# ========================================
+# ENVIRONNEMENT
+# ========================================
+
+# Fichiers d'environnement
+.env
+.env.local
+.env.production
+
+# ========================================
+# SAUVEGARDES
+# ========================================
+
+# Sauvegardes
+*.backup
+*.bak
+*.sql.gz
+*.sql.bz2
+
+# ========================================
+# NOTES DE DÉVELOPPEMENT
+# ========================================
+
+# Notes personnelles
+TODO.txt
+NOTES.md
+dev-notes/
