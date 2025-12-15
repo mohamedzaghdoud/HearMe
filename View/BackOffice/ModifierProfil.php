@@ -1,7 +1,6 @@
 <?php
 /**
  * Modification de profil (Admin) - HearMe
- * Emplacement : MON PROJET/View/BackOffice/ModifierProfil.php
  */
 
 require_once __DIR__ . '/../../config.php';
@@ -9,7 +8,6 @@ require_once __DIR__ . '/../../Controller/ProfilController.php';
 
 secureSession();
 
-// Vérifier si l'utilisateur est admin
 if (!isAdmin()) {
     redirect('../FrontOffice/Login.php');
 }
@@ -18,7 +16,6 @@ $controller = new ProfilController();
 $error = '';
 $success = '';
 
-// Récupérer l'ID du profil
 if (!isset($_GET['id'])) {
     redirect('ListerProfil.php');
 }
@@ -30,7 +27,6 @@ if (!$profil) {
     redirect('ListerProfil.php?error=Profil non trouvé');
 }
 
-// Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_POST['id'] = $id;
     $_POST['action'] = 'update';
@@ -43,122 +39,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = $result['message'];
     }
 }
+
+$pageTitle = "Modifier Profil - HearMe Admin";
+include __DIR__ . '/layout/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier Profil - HearMe Admin</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <aside class="col-md-3 sidebar">
-                <div class="sidebar-header">
-                    <h2>🎧 HearMe</h2>
-                    <p>Administration</p>
-                </div>
-                <nav class="sidebar-menu">
-                    <a href="dashboard.html" class="menu-item">
-                        <span class="icon">📊</span>
-                        <span class="text">Dashboard</span>
-                    </a>
-                    <a href="ListerUsers.php" class="menu-item">
-                        <span class="icon">👥</span>
-                        <span class="text">Utilisateurs</span>
-                    </a>
-                    <a href="ListerProfil.php" class="menu-item active">
-                        <span class="icon">👤</span>
-                        <span class="text">Profils</span>
-                    </a>
-                    <a href="logout.php" class="menu-item">
-                        <span class="icon">🚪</span>
-                        <span class="text">Déconnexion</span>
-                    </a>
-                </nav>
-            </aside>
 
-            <!-- Main Content -->
-            <main class="col-md-9 main-content">
-                <div class="page-header">
-                    <h1>Modifier le Profil</h1>
-                    <p>Modification du profil de <?php echo htmlspecialchars($profil['email']); ?></p>
+<div class="page-header">
+    <h1>Modifier le Profil</h1>
+    <p>Modification du profil de <?= htmlspecialchars($profil['email']) ?></p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="form-dark full-width">
+            <?php if ($error): ?>
+                <div class="alert-danger-dark"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
+
+            <?php if ($success): ?>
+                <div class="alert-success-dark"><?= htmlspecialchars($success) ?></div>
+            <?php endif; ?>
+
+            <form method="POST" action="">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Formation</label>
+                        <input type="text" name="formation" class="form-control" value="<?= htmlspecialchars($profil['formation']) ?>">
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Localisation</label>
+                        <input type="text" name="localisation" class="form-control" value="<?= htmlspecialchars($profil['localisation']) ?>">
+                    </div>
                 </div>
 
-                <div class="form-container">
-                    <?php if ($error): ?>
-                        <div class="alert alert-danger">
-                            <?php echo htmlspecialchars($error); ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ($success): ?>
-                        <div class="alert alert-success">
-                            <?php echo htmlspecialchars($success); ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <form method="POST" action="">
-                        <div class="form-group">
-                            <label for="bio">Biographie</label>
-                            <textarea id="bio" name="bio" rows="4"><?php echo htmlspecialchars($profil['bio']); ?></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="competences">Compétences</label>
-                            <textarea id="competences" name="competences" rows="3"><?php echo htmlspecialchars($profil['competences']); ?></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="formation">Formation</label>
-                            <input type="text" id="formation" name="formation" value="<?php echo htmlspecialchars($profil['formation']); ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="experience">Expérience</label>
-                            <textarea id="experience" name="experience" rows="4"><?php echo htmlspecialchars($profil['experience']); ?></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="reseaux_sociaux">Réseaux Sociaux</label>
-                            <input type="url" id="reseaux_sociaux" name="reseaux_sociaux" value="<?php echo htmlspecialchars($profil['reseaux_sociaux']); ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="disponibilite">Disponibilité</label>
-                            <select id="disponibilite" name="disponibilite">
-                                <option value="disponible" <?php echo $profil['disponibilite'] === 'disponible' ? 'selected' : ''; ?>>Disponible</option>
-                                <option value="occupé" <?php echo $profil['disponibilite'] === 'occupé' ? 'selected' : ''; ?>>Occupé</option>
-                                <option value="indisponible" <?php echo $profil['disponibilite'] === 'indisponible' ? 'selected' : ''; ?>>Indisponible</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="localisation">Localisation</label>
-                            <input type="text" id="localisation" name="localisation" value="<?php echo htmlspecialchars($profil['localisation']); ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="preferences">Préférences</label>
-                            <textarea id="preferences" name="preferences" rows="3"><?php echo htmlspecialchars($profil['preferences']); ?></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="autre_theme">Autre Thème</label>
-                            <textarea id="autre_theme" name="autre_theme" rows="3"><?php echo htmlspecialchars($profil['autre_theme']); ?></textarea>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">Mettre à jour</button>
-                            <a href="ListerProfil.php" class="btn btn-secondary">Annuler</a>
-                        </div>
-                    </form>
+                <div class="mb-4">
+                    <label class="form-label">Biographie</label>
+                    <textarea name="bio" class="form-control" rows="3"><?= htmlspecialchars($profil['bio']) ?></textarea>
                 </div>
-            </main>
+
+                <div class="mb-4">
+                    <label class="form-label">Compétences</label>
+                    <textarea name="competences" class="form-control" rows="2"><?= htmlspecialchars($profil['competences']) ?></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Expérience</label>
+                    <textarea name="experience" class="form-control" rows="3"><?= htmlspecialchars($profil['experience']) ?></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Réseaux Sociaux</label>
+                        <input type="url" name="reseaux_sociaux" class="form-control" value="<?= htmlspecialchars($profil['reseaux_sociaux']) ?>">
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Disponibilité</label>
+                        <select name="disponibilite" class="form-select">
+                            <option value="disponible" <?= $profil['disponibilite'] === 'disponible' ? 'selected' : '' ?>>Disponible</option>
+                            <option value="occupé" <?= $profil['disponibilite'] === 'occupé' ? 'selected' : '' ?>>Occupé</option>
+                            <option value="indisponible" <?= $profil['disponibilite'] === 'indisponible' ? 'selected' : '' ?>>Indisponible</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Préférences</label>
+                    <textarea name="preferences" class="form-control" rows="2"><?= htmlspecialchars($profil['preferences']) ?></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Autre Thème</label>
+                    <textarea name="autre_theme" class="form-control" rows="2"><?= htmlspecialchars($profil['autre_theme']) ?></textarea>
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn-gradient">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Mettre à jour
+                    </button>
+                    <a href="/hearme_user/View/BackOffice/ListerProfil.php" class="btn-dark">Annuler</a>
+                </div>
+            </form>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<?php include __DIR__ . '/layout/footer.php'; ?>

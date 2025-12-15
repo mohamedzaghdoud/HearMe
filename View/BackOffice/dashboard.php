@@ -1,7 +1,6 @@
 <?php
 /**
- * Dashboard Admin avec STATISTIQUES COMPLÈTES - HearMe
- * Emplacement : MON PROJET/View/BackOffice/dashboard.php
+ * Dashboard Admin - Dark Theme - HearMe
  */
 
 require_once __DIR__ . '/../../config.php';
@@ -18,34 +17,23 @@ $db = $userModel->getDb();
 
 // STATISTIQUES
 try {
-    // Total utilisateurs
     $stmt = $db->query("SELECT COUNT(*) as total FROM users");
     $totalUsers = $stmt->fetch()['total'];
 
-    // Utilisateurs vérifiés
     $stmt = $db->query("SELECT COUNT(*) as total FROM users WHERE email_verified = TRUE");
     $verifiedUsers = $stmt->fetch()['total'];
 
-    // Utilisateurs non vérifiés
     $unverifiedUsers = $totalUsers - $verifiedUsers;
 
-    // Nouveaux utilisateurs (7 derniers jours)
     $stmt = $db->query("SELECT COUNT(*) as total FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
     $newUsers = $stmt->fetch()['total'];
 
-    // Utilisateurs avec profil
     $stmt = $db->query("SELECT COUNT(DISTINCT id_user) as total FROM profil");
     $usersWithProfile = $stmt->fetch()['total'];
 
-    // Admins
     $stmt = $db->query("SELECT COUNT(*) as total FROM users WHERE role = 'admin'");
     $totalAdmins = $stmt->fetch()['total'];
 
-    // Tokens de réinitialisation actifs
-    $stmt = $db->query("SELECT COUNT(*) as total FROM password_resets WHERE used = FALSE AND expires_at > NOW()");
-    $activeResetTokens = $stmt->fetch()['total'];
-
-    // Inscriptions par jour (7 derniers jours)
     $stmt = $db->query("
         SELECT DATE(created_at) as date, COUNT(*) as count 
         FROM users 
@@ -55,7 +43,6 @@ try {
     ");
     $dailyRegistrations = $stmt->fetchAll();
 
-    // Utilisateurs récents
     $stmt = $db->query("
         SELECT id_user, email, role, email_verified, created_at 
         FROM users 
@@ -66,403 +53,222 @@ try {
 
 } catch (PDOException $e) {
     error_log("Erreur stats: " . $e->getMessage());
-    $totalUsers = $verifiedUsers = $unverifiedUsers = $newUsers = $usersWithProfile = $totalAdmins = $activeResetTokens = 0;
+    $totalUsers = $verifiedUsers = $unverifiedUsers = $newUsers = $usersWithProfile = $totalAdmins = 0;
     $dailyRegistrations = [];
     $recentUsers = [];
 }
+
+$pageTitle = "Dashboard - HearMe Admin";
+include __DIR__ . '/layout/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - HearMe</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            margin: 0;
-            padding: 0;
-        }
 
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+<!-- Page Header -->
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Vue d'ensemble de la plateforme HearMe</p>
+</div>
 
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: 700;
-            color: #5BA8C8;
-        }
-
-        .navbar-menu a {
-            color: #5BA8C8;
-            text-decoration: none;
-            margin-left: 20px;
-            font-weight: 600;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .page-header {
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            color: #2c3e50;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: #7f8c8d;
-            font-size: 16px;
-        }
-
-        /* CARTES STATISTIQUES */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border-left: 4px solid;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-        }
-
-        .stat-card.blue {
-            border-color: #3498db;
-        }
-
-        .stat-card.green {
-            border-color: #2ecc71;
-        }
-
-        .stat-card.orange {
-            border-color: #e67e22;
-        }
-
-        .stat-card.purple {
-            border-color: #9b59b6;
-        }
-
-        .stat-card.red {
-            border-color: #e74c3c;
-        }
-
-        .stat-card.teal {
-            border-color: #1abc9c;
-        }
-
-        .stat-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-        }
-
-        .stat-value {
-            font-size: 36px;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #7f8c8d;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        /* GRAPHIQUE */
-        .chart-container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-
-        .chart-container h2 {
-            color: #2c3e50;
-            font-size: 22px;
-            margin-bottom: 20px;
-        }
-
-        canvas {
-            max-height: 300px;
-        }
-
-        /* TABLE UTILISATEURS RÉCENTS */
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .table-container h2 {
-            color: #2c3e50;
-            font-size: 22px;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: #f8f9fa;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #5BA8C8;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e9ecef;
-            color: #2c3e50;
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-success {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .badge-warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .badge-admin {
-            background: #cce5ff;
-            color: #004085;
-        }
-
-        .badge-user {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .quick-action-btn {
-            flex: 1;
-            padding: 15px;
-            background: white;
-            border: 2px solid #5BA8C8;
-            border-radius: 12px;
-            color: #5BA8C8;
-            text-decoration: none;
-            text-align: center;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .quick-action-btn:hover {
-            background: #5BA8C8;
-            color: white;
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-brand">🎧 HearMe Admin</div>
-        <div class="navbar-menu">
-            <a href="dashboard.php">📊 Dashboard</a>
-            <a href="ListerUsers.php">👥 Utilisateurs</a>
-            <a href="dev-tools.php">🛠️ Dev Tools</a>
-            <a href="logout.php">🚪 Déconnexion</a>
+<!-- Stats Grid -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-4 col-md-6">
+        <div class="stat-card blue">
+            <div class="stat-icon blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="stat-value"><?= $totalUsers ?></div>
+            <div class="stat-label">Total Utilisateurs</div>
         </div>
-    </nav>
-
-    <div class="container">
-        <!-- En-tête -->
-        <div class="page-header">
-            <h1>📊 Tableau de bord</h1>
-            <p>Vue d'ensemble de la plateforme HearMe</p>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="stat-card green">
+            <div class="stat-icon green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div class="stat-value"><?= $verifiedUsers ?></div>
+            <div class="stat-label">Emails Vérifiés</div>
         </div>
-
-        <!-- Actions rapides -->
-        <div class="quick-actions">
-            <a href="ListerUsers.php" class="quick-action-btn">👥 Gérer les utilisateurs</a>
-            <a href="dev-tools.php" class="quick-action-btn">🛠️ Outils de dev</a>
-            <a href="AjoutUser.php" class="quick-action-btn">➕ Ajouter un utilisateur</a>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="stat-card orange">
+            <div class="stat-icon orange">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="stat-value"><?= $unverifiedUsers ?></div>
+            <div class="stat-label">En Attente</div>
         </div>
-
-        <!-- Statistiques -->
-        <div class="stats-grid">
-            <div class="stat-card blue">
-                <div class="stat-icon">👥</div>
-                <div class="stat-value"><?php echo $totalUsers; ?></div>
-                <div class="stat-label">Total Utilisateurs</div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="stat-card cyan">
+            <div class="stat-icon cyan">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
             </div>
-
-            <div class="stat-card green">
-                <div class="stat-icon">✅</div>
-                <div class="stat-value"><?php echo $verifiedUsers; ?></div>
-                <div class="stat-label">Emails Vérifiés</div>
-            </div>
-
-            <div class="stat-card orange">
-                <div class="stat-icon">⏳</div>
-                <div class="stat-value"><?php echo $unverifiedUsers; ?></div>
-                <div class="stat-label">En Attente</div>
-            </div>
-
-            <div class="stat-card purple">
-                <div class="stat-icon">🆕</div>
-                <div class="stat-value"><?php echo $newUsers; ?></div>
-                <div class="stat-label">Nouveaux (7j)</div>
-            </div>
-
-            <div class="stat-card teal">
-                <div class="stat-icon">📝</div>
-                <div class="stat-value"><?php echo $usersWithProfile; ?></div>
-                <div class="stat-label">Avec Profil</div>
-            </div>
-
-            <div class="stat-card red">
-                <div class="stat-icon">👑</div>
-                <div class="stat-value"><?php echo $totalAdmins; ?></div>
-                <div class="stat-label">Administrateurs</div>
-            </div>
+            <div class="stat-value"><?= $newUsers ?></div>
+            <div class="stat-label">Nouveaux (7j)</div>
         </div>
-
-        <!-- Graphique des inscriptions -->
-        <div class="chart-container">
-            <h2>📈 Inscriptions des 7 derniers jours</h2>
-            <canvas id="registrationChart"></canvas>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="stat-card purple">
+            <div class="stat-icon purple">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="stat-value"><?= $usersWithProfile ?></div>
+            <div class="stat-label">Avec Profil</div>
         </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="stat-card red">
+            <div class="stat-icon red">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div class="stat-value"><?= $totalAdmins ?></div>
+            <div class="stat-label">Administrateurs</div>
+        </div>
+    </div>
+</div>
 
-        <!-- Utilisateurs récents -->
-        <div class="table-container">
-            <h2>🕒 Utilisateurs récents</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>Statut</th>
-                        <th>Date d'inscription</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($recentUsers as $user): ?>
-                        <tr>
-                            <td><?php echo $user['id_user']; ?></td>
-                            <td><?php echo htmlspecialchars($user['email']); ?></td>
-                            <td>
-                                <span class="badge <?php echo $user['role'] === 'admin' ? 'badge-admin' : 'badge-user'; ?>">
-                                    <?php echo ucfirst($user['role']); ?>
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge <?php echo $user['email_verified'] ? 'badge-success' : 'badge-warning'; ?>">
-                                    <?php echo $user['email_verified'] ? 'Vérifié' : 'En attente'; ?>
-                                </span>
-                            </td>
-                            <td><?php echo date('d/m/Y H:i', strtotime($user['created_at'])); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+<!-- Chart & Recent Users -->
+<div class="row g-4">
+    <!-- Chart -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" style="color: #ffffff;">Inscriptions des 7 derniers jours</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="registrationChart" height="100"></canvas>
+            </div>
         </div>
     </div>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    <script>
-        // Données du graphique
-        const labels = <?php echo json_encode(array_reverse(array_column($dailyRegistrations, 'date'))); ?>;
-        const data = <?php echo json_encode(array_reverse(array_column($dailyRegistrations, 'count'))); ?>;
+    <!-- Quick Actions -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0" style="color: #ffffff;">Actions rapides</h5>
+            </div>
+            <div class="card-body d-grid gap-3">
+                <a href="ListerUsers.php" class="btn-gradient text-center text-decoration-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                    Gérer les utilisateurs
+                </a>
+                <a href="AjoutUser.php" class="btn-dark text-center text-decoration-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                    Ajouter un utilisateur
+                </a>
+                <a href="/hearme_user/Controller/QuizController.php?action=liste" class="btn-dark text-center text-decoration-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    Gérer les Quiz
+                </a>
+                <a href="dev-tools.php" class="btn-dark text-center text-decoration-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    Dev Tools
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-        // Configuration du graphique
-        const ctx = document.getElementById('registrationChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Inscriptions',
-                    data: data,
-                    borderColor: '#5BA8C8',
-                    backgroundColor: 'rgba(91, 168, 200, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#5BA8C8',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: '#2c3e50',
-                        padding: 12,
-                        cornerRadius: 8
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
+<!-- Recent Users Table -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" style="color: #ffffff;">Utilisateurs récents</h5>
+                <a href="ListerUsers.php" class="btn-gradient btn-sm">Voir tout</a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table-dark-custom">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Statut</th>
+                            <th>Date d'inscription</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($recentUsers as $user): ?>
+                        <tr>
+                            <td>#<?= $user['id_user'] ?></td>
+                            <td><?= htmlspecialchars($user['email']) ?></td>
+                            <td>
+                                <span class="badge-dark <?= $user['role'] === 'admin' ? 'badge-purple' : 'badge-info' ?>">
+                                    <?= ucfirst($user['role']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge-dark <?= $user['email_verified'] ? 'badge-success' : 'badge-warning' ?>">
+                                    <?= $user['email_verified'] ? 'Vérifié' : 'En attente' ?>
+                                </span>
+                            </td>
+                            <td><?= date('d/m/Y H:i', strtotime($user['created_at'])) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Chart Configuration
+const labels = <?= json_encode(array_reverse(array_column($dailyRegistrations, 'date'))) ?>;
+const data = <?= json_encode(array_reverse(array_column($dailyRegistrations, 'count'))) ?>;
+
+const ctx = document.getElementById('registrationChart').getContext('2d');
+const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
+gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Inscriptions',
+            data: data,
+            borderColor: '#6366f1',
+            backgroundColor: gradient,
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#6366f1',
+            pointBorderColor: '#1a1a2e',
+            pointBorderWidth: 3,
+            pointRadius: 6,
+            pointHoverRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#1a1a2e',
+                titleColor: '#fff',
+                bodyColor: '#a1a1aa',
+                borderColor: '#2d2d44',
+                borderWidth: 1,
+                padding: 12,
+                cornerRadius: 8
             }
-        });
-    </script>
-</body>
-</html>
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { color: '#2d2d44' },
+                ticks: { color: '#71717a' }
+            },
+            x: {
+                grid: { color: '#2d2d44' },
+                ticks: { color: '#71717a' }
+            }
+        }
+    }
+});
+</script>
+
+<?php include __DIR__ . '/layout/footer.php'; ?>
