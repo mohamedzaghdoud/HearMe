@@ -142,7 +142,7 @@ class UserController {
             if ($user['role'] === 'admin') {
                 header('Location: ../BackOffice/dashboard.php');
             } else {
-                header('Location: Home.html');
+                header('Location: Home.php');
             }
             exit;
 
@@ -220,7 +220,7 @@ class UserController {
             if ($role === 'admin') {
                 redirect('../BackOffice/dashboard.php');
             } else {
-                redirect('Home.html');
+                redirect('Home.php');
             }
             exit;
 
@@ -460,7 +460,7 @@ public function faceLogin() {
                 'similarity' => round($bestSimilarity, 3),
                 'redirect' => $bestMatch['role'] === 'admin'
                     ? '../BackOffice/dashboard.php'
-                    : 'Home.html'
+                    : 'Home.php'
             ]);
             exit;
         }
