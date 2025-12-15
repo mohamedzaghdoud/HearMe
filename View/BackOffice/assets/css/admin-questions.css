@@ -1,0 +1,37 @@
+/**
+ * CSS pour les pages de questions
+ * HearMe Admin
+ */
+
+/* ===== Option Card ===== */
+.option-card {
+    background: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.option-card:hover {
+    border-color: var(--accent-blue);
+}
+
+.option-card h6 {
+    color: var(--accent-cyan);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* ===== Section Title ===== */
+.section-title-icon {
+    color: var(--text-primary);
+    margin: 30px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title-icon svg {
+    stroke: var(--accent-purple);
+}

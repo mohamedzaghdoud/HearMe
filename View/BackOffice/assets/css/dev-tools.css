@@ -1,0 +1,101 @@
+/**
+ * CSS pour la page Dev Tools
+ * HearMe Admin
+ */
+
+/* ===== Warning Banner ===== */
+.dev-warning {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.1));
+    border: 2px solid var(--accent-red);
+    color: var(--accent-red);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ===== Log Viewer ===== */
+.log-viewer {
+    background: var(--dark-bg);
+    padding: 20px;
+    border-radius: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    color: var(--accent-green);
+    border: 1px solid var(--dark-border);
+}
+
+/* ===== Token Card ===== */
+.token-card {
+    background: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.token-card:hover {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 5px 20px rgba(34, 211, 238, 0.2);
+}
+
+.token-email {
+    color: var(--accent-orange);
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.token-value {
+    background: var(--dark-card);
+    padding: 10px;
+    border-radius: 6px;
+    word-break: break-all;
+    margin: 10px 0;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    color: var(--text-muted);
+    border: 1px solid var(--dark-border);
+}
+
+.token-link {
+    background: rgba(16, 185, 129, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+    margin: 10px 0;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.token-link a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    word-break: break-all;
+    font-size: 11px;
+}
+
+.token-link a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Scrollbar for log viewer ===== */
+.log-viewer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.log-viewer::-webkit-scrollbar-track {
+    background: var(--dark-card);
+    border-radius: 4px;
+}
+
+.log-viewer::-webkit-scrollbar-thumb {
+    background: var(--dark-border);
+    border-radius: 4px;
+}
+
+.log-viewer::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+}
