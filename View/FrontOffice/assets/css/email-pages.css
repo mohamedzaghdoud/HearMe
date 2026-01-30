@@ -1,0 +1,174 @@
+/**
+ * CSS pour les pages email (email-sent.php, verify-email.php)
+ * HearMe FrontOffice
+ */
+
+/* ===== Base Styles ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #A7C7E7 0%, #98D8C8 50%, #B4E7B0 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ===== Container ===== */
+.container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    padding: 50px;
+    max-width: 550px;
+    width: 100%;
+    text-align: center;
+}
+
+/* ===== Icon Animation ===== */
+.icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-20px); }
+    60% { transform: translateY(-10px); }
+}
+
+/* ===== Typography ===== */
+h1 {
+    color: #5BA8C8;
+    font-size: 32px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+h2.success {
+    color: #2E7D32;
+}
+
+h2.error {
+    color: #d32f2f;
+}
+
+p {
+    color: #555;
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+/* ===== Email Highlight ===== */
+.email-highlight {
+    color: #2E7D32;
+    font-weight: 600;
+    background: #E5F7E5;
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 15px 0;
+}
+
+/* ===== Instructions Box ===== */
+.instructions {
+    background: #F5F5F5;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 25px 0;
+    text-align: left;
+}
+
+.instructions h3 {
+    color: #5BA8C8;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.instructions ol {
+    margin-left: 20px;
+    color: #555;
+}
+
+.instructions li {
+    margin-bottom: 8px;
+}
+
+/* ===== Buttons ===== */
+.btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #A7C7E7 0%, #98D8C8 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(167, 199, 231, 0.4);
+    color: white;
+}
+
+/* ===== Help Text ===== */
+.help-text {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #E0E0E0;
+    font-size: 14px;
+    color: #999;
+}
+
+.help-text a {
+    color: #5BA8C8;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.help-text a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Verify Email Specific ===== */
+.verify-container {
+    max-width: 500px;
+    margin: 100px auto;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 576px) {
+    .container {
+        padding: 30px 20px;
+    }
+    
+    h1 {
+        font-size: 26px;
+    }
+    
+    .icon {
+        font-size: 60px;
+    }
+}

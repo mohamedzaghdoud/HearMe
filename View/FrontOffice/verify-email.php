@@ -21,30 +21,28 @@ if ($token) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vérification email - HearMe</title>
-    <style>
-        body { background: #f5f5f5; font-family: Arial, sans-serif; }
-        .container { max-width: 500px; margin: 100px auto; background: white; padding: 30px; border-radius: 15px; text-align: center; }
-        .success { color: green; }
-        .error { color: red; }
-        .btn { background: #5BA8C8; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/hearme_user/View/FrontOffice/assets/css/email-pages.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container verify-container">
         <?php if ($result): ?>
             <?php if ($result['success']): ?>
-                <h2 class="success">✅ Email vérifié !</h2>
+                <div class="icon">✅</div>
+                <h2 class="success">Email vérifié !</h2>
                 <p><?php echo htmlspecialchars($result['message']); ?></p>
-                <a href="Login.php" class="btn">Se connecter</a>
+                <a href="/hearme_user/View/FrontOffice/Login.php" class="btn">Se connecter</a>
             <?php else: ?>
-                <h2 class="error">❌ Échec de vérification</h2>
+                <div class="icon">❌</div>
+                <h2 class="error">Échec de vérification</h2>
                 <p><?php echo htmlspecialchars($result['message']); ?></p>
-                <a href="Login.php" class="btn">Retour à la connexion</a>
+                <a href="/hearme_user/View/FrontOffice/Login.php" class="btn">Retour à la connexion</a>
             <?php endif; ?>
         <?php else: ?>
+            <div class="icon">⚠️</div>
             <h2 class="error">Lien invalide</h2>
             <p>Aucun token fourni.</p>
-            <a href="Login.php" class="btn">Retour à la connexion</a>
+            <a href="/hearme_user/View/FrontOffice/Login.php" class="btn">Retour à la connexion</a>
         <?php endif; ?>
     </div>
 </body>

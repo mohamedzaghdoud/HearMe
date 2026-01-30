@@ -14,7 +14,7 @@ if (isLoggedIn()) {
     if (isAdmin()) {
         redirect('../BackOffice/dashboard.html');
     } else {
-        redirect('Home.html');
+        redirect('Home.php');
     }
 }
 

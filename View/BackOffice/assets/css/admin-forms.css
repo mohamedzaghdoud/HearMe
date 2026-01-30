@@ -1,0 +1,168 @@
+/**
+ * CSS pour les formulaires du BackOffice
+ * HearMe Admin
+ */
+
+/* ===== Form Dark Container ===== */
+.form-dark {
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 600px;
+}
+
+.form-dark.full-width {
+    max-width: 100%;
+}
+
+/* ===== Form Labels ===== */
+.form-dark .form-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+/* ===== Form Controls ===== */
+.form-dark .form-control,
+.form-dark .form-select {
+    background: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    color: var(--text-primary);
+    border-radius: 10px;
+    padding: 12px 15px;
+}
+
+.form-dark .form-control:focus,
+.form-dark .form-select:focus {
+    background: var(--dark-bg);
+    border-color: var(--accent-blue);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.form-dark .form-control::placeholder {
+    color: var(--text-muted);
+}
+
+/* ===== Checkboxes ===== */
+.form-dark .form-check-input {
+    background-color: var(--dark-bg);
+    border-color: var(--dark-border);
+}
+
+.form-dark .form-check-input:checked {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+.form-dark .form-check-label {
+    color: var(--text-secondary);
+}
+
+/* ===== Password Requirements Box ===== */
+.password-requirements {
+    background: var(--dark-bg);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 1px solid var(--dark-border);
+}
+
+.password-requirements strong {
+    color: var(--accent-cyan);
+}
+
+.password-requirements ul {
+    margin: 10px 0 0 20px;
+    color: var(--text-secondary);
+}
+
+/* ===== Info Box ===== */
+.info-box {
+    background: rgba(99, 102, 241, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--accent-blue);
+}
+
+.info-box p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* ===== Alert Boxes ===== */
+.alert-danger-dark {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid var(--accent-red);
+    color: var(--accent-red);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.alert-success-dark {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid var(--accent-green);
+    color: var(--accent-green);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.alert-warning-dark {
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid var(--accent-orange);
+    color: var(--accent-orange);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.alert-info-dark {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* ===== Required Field Indicator ===== */
+.required-indicator {
+    color: var(--accent-red);
+}
+
+/* ===== File Input ===== */
+.form-dark input[type="file"] {
+    background: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    color: var(--text-primary);
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+
+.form-dark input[type="file"]::file-selector-button {
+    background: var(--accent-blue);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* ===== Textarea ===== */
+.form-dark textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* ===== Form Actions ===== */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
